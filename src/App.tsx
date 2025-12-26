@@ -3,9 +3,48 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Heart, Dog } from 'lucide-react';
 import { supabase } from './supabase';
 
+const LYRICS_DATA = [
+  { time: 0, text: "无常呀 无常" },
+  { time: 4, text: "无常呀 无常" },
+  { time: 8, text: "你见过长夜的黑暗" },
+  { time: 12, text: "也见过人的良善" },
+  { time: 16, text: "" }, // instrumental / break
+  { time: 18, text: "你从出生开始流浪" },
+  { time: 22, text: "你在寒风中受伤" },
+  { time: 26, text: "可是 你依然坚强" },
+  { time: 30, text: "" },
+  { time: 32, text: "无常呀 无常" },
+  { time: 36, text: "你遇见两位哥哥给你喂了一口饭" },
+  { time: 42, text: "因为你毛色黑白腿长长" },
+  { time: 46, text: "他们喊你作无常" },
+  { time: 50, text: "" },
+  { time: 52, text: "小狗无常" },
+  { time: 54, text: "聪明又好看" },
+  { time: 56, text: "可爱又善良" },
+  { time: 58, text: "你会看家 带娃 还会讨饭" },
+  { time: 64, text: "" },
+  { time: 66, text: "小狗无常" },
+  { time: 68, text: "愿你好好长大 无忧无患" },
+  { time: 72, text: "愿你寻到一个温暖的家" },
+  { time: 78, text: "" },
+  { time: 94, text: "无常呀 无常" },
+  { time: 98, text: "人生本就无常" },
+  { time: 102, text: "你经历过风霜" },
+  { time: 106, text: "依旧阳光灿烂" },
+  { time: 110, text: "" },
+  { time: 112, text: "无常呀 无常" },
+  { time: 116, text: "感谢上天带你到我身旁" },
+  { time: 120, text: "让我看见爱纯粹的模样" },
+  { time: 126, text: "" },
+  { time: 128, text: "无常呀 无常" },
+  { time: 132, text: "愿你寻到一个温暖的家" },
+  { time: 136, text: "陪伴守护直到永远" }
+];
+
 // --- Immersive Music Player (New Important Position) ---
 const MainPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const togglePlay = () => {
@@ -18,35 +57,71 @@ const MainPlayer = () => {
     setIsPlaying(!isPlaying);
   };
 
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const activeLyricIndex = LYRICS_DATA.findIndex((line, i) => {
+    const nextLine = LYRICS_DATA[i + 1];
+    return currentTime >= line.time && (!nextLine || currentTime < nextLine.time);
+  });
+
+  // Show lyrics only when playing, otherwise show credits
+  const currentLyric = isPlaying && activeLyricIndex !== -1 ? LYRICS_DATA[activeLyricIndex].text : "";
+
   return (
     <motion.div
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className="main-player-hero glass"
     >
-      <audio ref={audioRef} src="/wuchang_song.wav" loop />
-      <div className="player-left">
-        <div className={`vinyl-record ${isPlaying ? 'spinning' : ''}`}>
-          <img src="/images/wucang5.jpeg" alt="Song Cover" />
-          <div className="vinyl-center" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <audio
+          ref={audioRef}
+          src="/wuchang_song.wav"
+          loop
+          onTimeUpdate={handleTimeUpdate}
+        />
+        <div className="player-left">
+          <div className={`vinyl-record ${isPlaying ? 'spinning' : ''}`}>
+            <img src="/images/wucang5.jpeg" alt="Song Cover" />
+            <div className="vinyl-center" />
+          </div>
+          <div className="song-meta">
+            <span className="live-badge">
+              <span className="dot" /> NOW PLAYING
+            </span>
+            <h3>无常之歌 (Official Theme)</h3>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentLyric || "credits"}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  color: currentLyric ? '#ffffff' : 'rgba(255,255,255,0.6)',
+                  fontWeight: currentLyric ? 500 : 400,
+                  minHeight: '24px' // Prevent layout shift
+                }}
+              >
+                {currentLyric || "作词：菲比 / 作曲：AI"}
+              </motion.p>
+            </AnimatePresence>
+          </div>
         </div>
-        <div className="song-meta">
-          <span className="live-badge">
-            <span className="dot" /> NOW PLAYING
-          </span>
-          <h3>无常之歌 (Official Theme)</h3>
-          <p>作曲：菲比</p>
+        <div className="player-controls">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={togglePlay}
+            className="play-btn-large"
+          >
+            {isPlaying ? <Pause size={32} /> : <Play size={32} fill="currentColor" />}
+          </motion.button>
         </div>
-      </div>
-      <div className="player-controls">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={togglePlay}
-          className="play-btn-large"
-        >
-          {isPlaying ? <Pause size={32} /> : <Play size={32} fill="currentColor" />}
-        </motion.button>
       </div>
     </motion.div>
   );

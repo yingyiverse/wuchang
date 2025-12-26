@@ -1,33 +1,26 @@
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  
-  /* Colors - Apple & Linear inspired */
-  --bg-color: #ffffff;
-  --text-primary: #1d1d1f;
-  --text-secondary: #86868b;
-  --accent-color: #ff9500; /* Warm orange for Wuchang */
-  --accent-soft: rgba(255, 149, 0, 0.1);
-  --border-color: rgba(0, 0, 0, 0.1);
-  --card-bg: rgba(255, 255, 255, 0.7);
+
+  /* Colors - Apple & Linear inspired (Dark Mode Default) */
+  --bg-color: #050505;
+  /* Deep black but not pure #000 for softer look, or stay #000 if preferred */
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --accent-color: #ffb700;
+  /* Warm gold/orange for Wuchang */
+  --accent-soft: rgba(255, 183, 0, 0.1);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(28, 28, 30, 0.7);
   --card-blur: 20px;
-  
-  --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.04);
-  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.08);
-  
+
+  --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.4);
+
   --radius-button: 12px;
   --radius-card: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #000000;
-    --text-primary: #f5f5f7;
-    --text-secondary: #a1a1a6;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --card-bg: rgba(28, 28, 30, 0.7);
-    --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.2);
-  }
-}
+/* Optional: Light mode override if needed, but keeping it fully dark for now as per request */
 
 * {
   margin: 0;
