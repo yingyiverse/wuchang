@@ -54,15 +54,27 @@ const MainPlayer = () => {
 
 const Hero = ({ onAdoptClick }: { onAdoptClick: () => void }) => {
   const [showVideo, setShowVideo] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  // Preload video to check if it's ready
+  React.useEffect(() => {
+    const video = document.createElement('video');
+    video.src = "/wucang.mp4";
+    video.oncanplaythrough = () => setIsVideoReady(true);
+    // Explicitly start loading
+    video.load();
+  }, []);
 
   // Auto-switch between photo and video
   React.useEffect(() => {
+    if (!isVideoReady) return;
+
     const timer = setInterval(() => {
       setShowVideo(prev => !prev);
     }, 8000); // Switch every 8 seconds
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isVideoReady]);
 
   return (
     <section className="hero-v2">
